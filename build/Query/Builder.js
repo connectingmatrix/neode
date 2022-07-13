@@ -29,6 +29,8 @@ var _WithDistinctStatement = _interopRequireDefault(require("./WithDistinctState
 
 var _neo4jDriver = _interopRequireDefault(require("neo4j-driver"));
 
+var _Unwind = _interopRequireDefault(require("./Unwind"));
+
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -149,6 +151,27 @@ var Builder = /*#__PURE__*/function () {
       return this;
     }
     /**
+    * Add a 'UNWIND' statement to the query
+    *
+    * @param  {...String} args Variables/aliases to carry through
+    * @return {Builder}
+    */
+
+  }, {
+    key: "unwind",
+    value: function unwind() {
+      this.whereStatement('WHERE');
+      this.statement();
+
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      this._statements.push(_construct(_Unwind["default"], args));
+
+      return this;
+    }
+    /**
      * Add a 'with' statement to the query
      *
      * @param  {...String} args Variables/aliases to carry through
@@ -161,8 +184,8 @@ var Builder = /*#__PURE__*/function () {
       this.whereStatement('WHERE');
       this.statement();
 
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
       }
 
       this._statements.push(_construct(_WithStatement["default"], args));
@@ -182,8 +205,8 @@ var Builder = /*#__PURE__*/function () {
       this.whereStatement('WHERE');
       this.statement();
 
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        args[_key3] = arguments[_key3];
       }
 
       this._statements.push(_construct(_WithDistinctStatement["default"], args));
@@ -201,6 +224,18 @@ var Builder = /*#__PURE__*/function () {
     value: function or() {
       this.whereStatement('OR');
       return this.where.apply(this, arguments);
+    }
+    /**
+     * Create a new WhereSegment
+     * @param  {...mixed} args
+     * @return {Builder}
+     */
+
+  }, {
+    key: "orRegex",
+    value: function orRegex() {
+      this.whereStatement('OR');
+      return this.whereRegex.apply(this, arguments);
     }
     /**
      * Generate a unique key and add the value to the params object
@@ -237,8 +272,8 @@ var Builder = /*#__PURE__*/function () {
     value: function where() {
       var _this = this;
 
-      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-        args[_key3] = arguments[_key3];
+      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+        args[_key4] = arguments[_key4];
       }
 
       if (!args.length || !args[0]) return this; // If 2 character length, it should be straight forward where
@@ -270,6 +305,61 @@ var Builder = /*#__PURE__*/function () {
             left = _args4[0],
             operator = _args4[1],
             value = _args4[2];
+
+        var right = this._addWhereParameter(left, value);
+
+        this._params[right] = value;
+
+        this._where.append(new _Where["default"](left, operator, "$".concat(right)));
+      }
+
+      return this;
+    }
+    /**
+    * Add a where condition to the current statement.
+    *
+    * @param  {...mixed} args Arguments
+    * @return {Builder}
+    */
+
+  }, {
+    key: "whereRegex",
+    value: function whereRegex() {
+      var _this2 = this;
+
+      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
+      }
+
+      if (!args.length || !args[0]) return this; // If 2 character length, it should be straight forward where
+
+      if (args.length == 2) {
+        args = [args[0], _Where.OPERATOR_INCLUDES, args[1]];
+      } // If only one argument, treat it as a single string
+
+
+      if (args.length == 1) {
+        var _args5 = args,
+            _args6 = _slicedToArray(_args5, 1),
+            arg = _args6[0];
+
+        if (Array.isArray(arg)) {
+          arg.forEach(function (inner) {
+            _this2.where.apply(_this2, _toConsumableArray(inner));
+          });
+        } else if (_typeof(arg) == 'object') {
+          Object.keys(arg).forEach(function (key) {
+            _this2.where(key, arg[key]);
+          });
+        } else {
+          this._where.append(new _WhereRaw["default"](args[0]));
+        }
+      } else {
+        var _args7 = args,
+            _args8 = _slicedToArray(_args7, 3),
+            left = _args8[0],
+            operator = _args8[1],
+            value = _args8[2];
 
         var right = this._addWhereParameter(left, value);
 
@@ -425,12 +515,12 @@ var Builder = /*#__PURE__*/function () {
   }, {
     key: "_convertPropertyMap",
     value: function _convertPropertyMap(alias, properties) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (properties) {
         return Object.keys(properties).map(function (key) {
           var property_alias = "".concat(alias, "_").concat(key);
-          _this2._params[property_alias] = properties[key];
+          _this3._params[property_alias] = properties[key];
           return new _Property["default"](key, property_alias);
         });
       }
@@ -467,14 +557,14 @@ var Builder = /*#__PURE__*/function () {
   }, {
     key: "set",
     value: function set(property, value) {
-      var _this3 = this;
+      var _this4 = this;
 
       var operator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '=';
 
       // Support a map of properties
       if (!value && property instanceof Object) {
         Object.keys(property).forEach(function (key) {
-          _this3.set(key, property[key]);
+          _this4.set(key, property[key]);
         });
       } else {
         if (value !== undefined) {
@@ -501,14 +591,14 @@ var Builder = /*#__PURE__*/function () {
   }, {
     key: "onCreateSet",
     value: function onCreateSet(property, value) {
-      var _this4 = this;
+      var _this5 = this;
 
       var operator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '=';
 
       // Support a map of properties
       if (value === undefined && property instanceof Object) {
         Object.keys(property).forEach(function (key) {
-          _this4.onCreateSet(key, property[key]);
+          _this5.onCreateSet(key, property[key]);
         });
       } else {
         var alias = "set_".concat(this._set_count);
@@ -531,14 +621,14 @@ var Builder = /*#__PURE__*/function () {
   }, {
     key: "onMatchSet",
     value: function onMatchSet(property, value) {
-      var _this5 = this;
+      var _this6 = this;
 
       var operator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '=';
 
       // Support a map of properties
       if (value === undefined && property instanceof Object) {
         Object.keys(property).forEach(function (key) {
-          _this5.onMatchSet(key, property[key]);
+          _this6.onMatchSet(key, property[key]);
         });
       } else {
         var alias = "set_".concat(this._set_count);
@@ -560,8 +650,8 @@ var Builder = /*#__PURE__*/function () {
   }, {
     key: "remove",
     value: function remove() {
-      for (var _len4 = arguments.length, items = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        items[_key4] = arguments[_key4];
+      for (var _len6 = arguments.length, items = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+        items[_key6] = arguments[_key6];
       }
 
       this._current.remove(items);
@@ -622,10 +712,10 @@ var Builder = /*#__PURE__*/function () {
   }, {
     key: "orderBy",
     value: function orderBy() {
-      var _this6 = this;
+      var _this7 = this;
 
-      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-        args[_key5] = arguments[_key5];
+      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+        args[_key7] = arguments[_key7];
       }
 
       var order_by;
@@ -636,7 +726,7 @@ var Builder = /*#__PURE__*/function () {
       } else if (Array.isArray(args[0])) {
         // Handle array of where's
         args[0].forEach(function (arg) {
-          _this6.orderBy(arg);
+          _this7.orderBy(arg);
         });
       } // TODO: Ugly, stop supporting this
       else if (_typeof(args[0]) == 'object' && args[0].field) {
@@ -645,7 +735,7 @@ var Builder = /*#__PURE__*/function () {
         } else if (_typeof(args[0]) == 'object') {
           // Assume {key: order}
           Object.keys(args[0]).forEach(function (key) {
-            _this6.orderBy(key, args[0][key]);
+            _this7.orderBy(key, args[0][key]);
           });
         } else if (args[0]) {
           // Assume orderBy(what, 'ASC')

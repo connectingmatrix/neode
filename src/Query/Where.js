@@ -1,5 +1,5 @@
 export const OPERATOR_EQUALS = '=';
-
+export const OPERATOR_INCLUDES = '=~';
 export default class Where {
 
     constructor(left, operator, right) {

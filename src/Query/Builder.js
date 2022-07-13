@@ -4,13 +4,14 @@ import Order from './Order';
 import Statement from './Statement';
 import Property from './Property';
 import WhereStatement from './WhereStatement';
-import Where, {OPERATOR_EQUALS} from './Where';
+import Where, { OPERATOR_EQUALS, OPERATOR_INCLUDES } from './Where';
 import WhereBetween from './WhereBetween';
 import WhereId from './WhereId';
 import WhereRaw from './WhereRaw';
 import WithStatement from './WithStatement';
 import WithDistinctStatement from './WithDistinctStatement';
 import neo4j from 'neo4j-driver';
+import UnwindStatement from './Unwind';
 
 export const mode = {
     READ: "READ",
@@ -72,7 +73,7 @@ export default class Builder {
         this.whereStatement('WHERE');
         this.statement();
 
-        this._current.match( new Match(alias, model, this._convertPropertyMap( alias, properties ) ) );
+        this._current.match(new Match(alias, model, this._convertPropertyMap(alias, properties)));
 
         return this;
     }
@@ -82,6 +83,21 @@ export default class Builder {
         this.statement('OPTIONAL MATCH');
 
         this._current.match(new Match(alias, model));
+
+        return this;
+    }
+
+    /**
+    * Add a 'UNWIND' statement to the query
+    *
+    * @param  {...String} args Variables/aliases to carry through
+    * @return {Builder}
+    */
+    unwind(...args) {
+        this.whereStatement('WHERE');
+        this.statement();
+
+        this._statements.push(new UnwindStatement(...args));
 
         return this;
     }
@@ -128,6 +144,17 @@ export default class Builder {
     }
 
     /**
+     * Create a new WhereSegment
+     * @param  {...mixed} args
+     * @return {Builder}
+     */
+    orRegex(...args) {
+        this.whereStatement('OR');
+
+        return this.whereRegex(...args);
+    }
+
+    /**
      * Generate a unique key and add the value to the params object
      *
      * @param {String} key
@@ -140,13 +167,13 @@ export default class Builder {
         // Try to create a unique key
         let variable = base;
 
-        while ( typeof this._params[ variable ] != "undefined" ) {
+        while (typeof this._params[variable] != "undefined") {
             attempt++;
 
             variable = `${base}_${attempt}`;
         }
 
-        this._params[ variable ] = value;
+        this._params[variable] = value;
 
         return variable;
     }
@@ -166,7 +193,7 @@ export default class Builder {
         }
 
         // If only one argument, treat it as a single string
-        if ( args.length == 1) {
+        if (args.length == 1) {
             const [arg] = args;
 
             if (Array.isArray(arg)) {
@@ -187,12 +214,56 @@ export default class Builder {
             const [left, operator, value] = args;
             const right = this._addWhereParameter(left, value);
 
-            this._params[ right ] = value;
+            this._params[right] = value;
             this._where.append(new Where(left, operator, `$${right}`));
         }
 
         return this;
     }
+
+    /**
+ * Add a where condition to the current statement.
+ *
+ * @param  {...mixed} args Arguments
+ * @return {Builder}
+ */
+    whereRegex(...args) {
+        if (!args.length || !args[0]) return this;
+
+        // If 2 character length, it should be straight forward where
+        if (args.length == 2) {
+            args = [args[0], OPERATOR_INCLUDES, args[1]];
+        }
+
+        // If only one argument, treat it as a single string
+        if (args.length == 1) {
+            const [arg] = args;
+
+            if (Array.isArray(arg)) {
+                arg.forEach(inner => {
+                    this.where(...inner);
+                });
+            }
+            else if (typeof arg == 'object') {
+                Object.keys(arg).forEach(key => {
+                    this.where(key, arg[key]);
+                });
+            }
+            else {
+                this._where.append(new WhereRaw(args[0]));
+            }
+        }
+        else {
+            const [left, operator, value] = args;
+            const right = this._addWhereParameter(left, value);
+
+            this._params[right] = value;
+            this._where.append(new Where(left, operator, `$${right}`));
+        }
+
+        return this;
+    }
+
 
     /**
      * Query on Internal ID
@@ -304,7 +375,7 @@ export default class Builder {
         this.whereStatement('WHERE');
         this.statement('CREATE');
 
-        this._current.match( new Match(alias, model, this._convertPropertyMap( alias, properties ) ) );
+        this._current.match(new Match(alias, model, this._convertPropertyMap(alias, properties)));
 
         return this;
     }
@@ -315,13 +386,13 @@ export default class Builder {
      * @param {Object|null} properties
      */
     _convertPropertyMap(alias, properties) {
-        if ( properties ) {
+        if (properties) {
             return Object.keys(properties).map(key => {
                 const property_alias = `${alias}_${key}`;
 
-                this._params[ property_alias ] = properties[ key ];
+                this._params[property_alias] = properties[key];
 
-                return new Property( key, property_alias );
+                return new Property(key, property_alias);
             });
         }
 
@@ -340,7 +411,7 @@ export default class Builder {
         this.whereStatement('WHERE');
         this.statement('MERGE');
 
-        this._current.match( new Match(alias, model, this._convertPropertyMap( alias, properties ) ) );
+        this._current.match(new Match(alias, model, this._convertPropertyMap(alias, properties)));
 
         return this;
     }
@@ -354,15 +425,15 @@ export default class Builder {
      */
     set(property, value, operator = '=') {
         // Support a map of properties
-        if ( !value && property instanceof Object ) {
+        if (!value && property instanceof Object) {
             Object.keys(property).forEach(key => {
-                this.set(key, property[ key ]);
+                this.set(key, property[key]);
             });
         }
         else {
-            if ( value !== undefined ) {
+            if (value !== undefined) {
                 const alias = `set_${this._set_count}`;
-                this._params[ alias ] = value;
+                this._params[alias] = value;
 
                 this._set_count++;
 
@@ -385,14 +456,14 @@ export default class Builder {
      */
     onCreateSet(property, value, operator = '=') {
         // Support a map of properties
-        if ( value === undefined && property instanceof Object ) {
+        if (value === undefined && property instanceof Object) {
             Object.keys(property).forEach(key => {
-                this.onCreateSet(key, property[ key ]);
+                this.onCreateSet(key, property[key]);
             });
         }
         else {
             const alias = `set_${this._set_count}`;
-            this._params[ alias ] = value;
+            this._params[alias] = value;
 
             this._set_count++;
 
@@ -412,14 +483,14 @@ export default class Builder {
      */
     onMatchSet(property, value, operator = '=') {
         // Support a map of properties
-        if ( value === undefined && property instanceof Object ) {
+        if (value === undefined && property instanceof Object) {
             Object.keys(property).forEach(key => {
-                this.onMatchSet(key, property[ key ]);
+                this.onMatchSet(key, property[key]);
             });
         }
         else {
             const alias = `set_${this._set_count}`;
-            this._params[ alias ] = value;
+            this._params[alias] = value;
 
             this._set_count++;
 
@@ -543,7 +614,7 @@ export default class Builder {
      * @return {Builder}
      */
     to(alias, model, properties) {
-        this._current.match( new Match(alias, model, this._convertPropertyMap(alias, properties) ) );
+        this._current.match(new Match(alias, model, this._convertPropertyMap(alias, properties)));
 
         return this;
     }
