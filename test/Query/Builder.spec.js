@@ -27,8 +27,8 @@ describe('Query/Builder.js', () => {
             age: {
                 type: 'number',
                 index: true,
-                default: 30
-            }
+                default: 30,
+            },
         });
     });
 
@@ -55,7 +55,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (id(this) = $where_this_id) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
             const expected_params = { where_this_id: int(1) };
 
@@ -82,7 +82,7 @@ describe('Query/Builder.js', () => {
                 '(that:QueryBuilderTest)',
                 'WHERE (id(that) = $where_that_id) ',
                 'RETURN',
-                'this,that'
+                'this,that',
             ].join('\n');
 
             const expected_params = { where_this_id: int(1), where_that_id: int(2) };
@@ -105,7 +105,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (this.property = $where_this_property) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
@@ -127,7 +127,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (this.property = $where_this_property) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
@@ -140,7 +140,7 @@ describe('Query/Builder.js', () => {
 
             const { query, params } = builder
                 .match('this', 'QueryBuilderTest')
-                .where({'this.property': 'that'})
+                .where({ 'this.property': 'that' })
                 .return('this')
                 .build();
 
@@ -149,13 +149,13 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (this.property = $where_this_property) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal(expected_params);
-        })
+        });
 
         it('should build a query with a whereRaw clause', () => {
             const builder = new Builder();
@@ -165,7 +165,7 @@ describe('Query/Builder.js', () => {
                 .whereRaw('this.property >= datetime()')
                 .return('this')
                 .build();
-        })
+        });
 
         it('should build a query with two where clauses', () => {
             const builder = new Builder();
@@ -182,7 +182,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (this.property = $where_this_property AND this.other_property = $where_this_other_property) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
             const expected_params = { where_this_property: 'that', where_this_other_property: 'not that' };
 
@@ -197,7 +197,7 @@ describe('Query/Builder.js', () => {
                 .match('this', model)
                 .where([
                     ['this.property', 'that'],
-                    ['this.other_property', 'not that']
+                    ['this.other_property', 'not that'],
                 ])
                 .return('this')
                 .build();
@@ -207,7 +207,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (this.property = $where_this_property AND this.other_property = $where_this_other_property) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
             const expected_params = { where_this_property: 'that', where_this_other_property: 'not that' };
 
@@ -222,7 +222,7 @@ describe('Query/Builder.js', () => {
                 .match('this', model)
                 .where({
                     'this.property': 'that',
-                    'this.other_property': 'not that'
+                    'this.other_property': 'not that',
                 })
                 .return('this')
                 .build();
@@ -232,7 +232,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (this.property = $where_this_property AND this.other_property = $where_this_other_property) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
             const expected_params = { where_this_property: 'that', where_this_other_property: 'not that' };
 
@@ -254,7 +254,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (this.property = "that") ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -275,7 +275,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (this.property = $where_this_property) OR (this.other_property = $where_this_other_property) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
             const expected_params = { where_this_property: 'that', where_this_other_property: 'not that' };
 
@@ -301,7 +301,7 @@ describe('Query/Builder.js', () => {
                 'RETURN',
                 'this',
                 'SKIP 1',
-                'LIMIT 1'
+                'LIMIT 1',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
@@ -331,7 +331,7 @@ describe('Query/Builder.js', () => {
                 '(that:QueryBuilderTest)',
                 'WHERE (id(that) = $where_that_id) ',
                 'RETURN',
-                'this,that'
+                'this,that',
             ].join('\n');
 
             const expected_params = { where_this_id: int(1), where_that_id: int(2) };
@@ -361,13 +361,13 @@ describe('Query/Builder.js', () => {
                 'ORDER BY',
                 'this.property ASC',
                 'SKIP 20',
-                'LIMIT 10'
+                'LIMIT 10',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal(expected_params);
-        })
+        });
 
         it('should build a query with multiple order statements', () => {
             const builder = new Builder();
@@ -391,7 +391,7 @@ describe('Query/Builder.js', () => {
                 'ORDER BY',
                 'this.property ASC,this.other DESC',
                 'SKIP 20',
-                'LIMIT 10'
+                'LIMIT 10',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
@@ -420,7 +420,7 @@ describe('Query/Builder.js', () => {
                 'ORDER BY',
                 'this.property,this.other',
                 'SKIP 20',
-                'LIMIT 10'
+                'LIMIT 10',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
@@ -449,7 +449,7 @@ describe('Query/Builder.js', () => {
                 'ORDER BY',
                 'this.property DESC',
                 'SKIP 20',
-                'LIMIT 10'
+                'LIMIT 10',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
@@ -478,7 +478,7 @@ describe('Query/Builder.js', () => {
                 'ORDER BY',
                 'this.property ASC,this.that DESC',
                 'SKIP 20',
-                'LIMIT 10'
+                'LIMIT 10',
             ].join('\n');
             const expected_params = { where_this_property: 'that' };
 
@@ -502,7 +502,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)-[:`REL_TO`]->(that:QueryBuilderTest)',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -524,7 +524,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)-[:`REL_TO`]->()',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -545,7 +545,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)-[:`REL_TO`]->(that:QueryBuilderTest)',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -566,7 +566,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)<-[:`REL_TO`]-(that:QueryBuilderTest)',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -587,7 +587,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)-[rel:`REL_TO`]->(that:QueryBuilderTest)',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -598,7 +598,7 @@ describe('Query/Builder.js', () => {
             const { query, params } = builder
                 .match('this', model)
                 .relationship('REL_TO', 'out', 'rel')
-                .to('that', model, {name: 'name'})
+                .to('that', model, { name: 'name' })
                 .return('this', 'rel', 'that')
                 .build();
             const expected = [
@@ -606,9 +606,9 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)-[rel:`REL_TO`]->(that:QueryBuilderTest { name: $that_name })',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
-            
+
             const expected_params = { that_name: 'name' };
             expect(query).to.equal(expected);
             expect(params).to.deep.equal(expected_params);
@@ -629,7 +629,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)-[rel]->(that:QueryBuilderTest)',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -650,12 +650,11 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)-[rel:`REL_1_TO`|`REL_2_TO`]->(that:QueryBuilderTest)',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
         });
-
 
         it('should build a query with an outwards relationship with alias and traversal', () => {
             const builder = new Builder();
@@ -672,7 +671,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)-[rel:`REL_TO`*1..3]->(that:QueryBuilderTest)',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -697,7 +696,7 @@ describe('Query/Builder.js', () => {
                 '(this)-[:`REL_TO`]->(that:QueryBuilderTest)',
                 '',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -716,7 +715,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest { id: $this_id, name: $this_name })',
                 '',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -736,7 +735,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (NOT this.name = $where_this_name) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -757,7 +756,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (NOT this.name = $where_this_name AND NOT this.name = $where_this_name_2) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -777,7 +776,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE ($where_this_age_floor <= this.age <= $where_this_age_ceiling) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -797,7 +796,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 'WHERE (NOT $where_this_age_floor <= this.age <= $where_this_age_ceiling) ',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -821,7 +820,7 @@ describe('Query/Builder.js', () => {
                 'DELETE',
                 'this',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -840,7 +839,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest)',
                 '',
                 'DETACH DELETE',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -867,8 +866,8 @@ describe('Query/Builder.js', () => {
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal({
-                'set_0': 'value1',
-                'set_1': 'value2',
+                set_0: 'value1',
+                set_1: 'value2',
             });
         });
 
@@ -891,7 +890,7 @@ describe('Query/Builder.js', () => {
                 'SET',
                 'this.prop1 = $set_0, this.prop2 = $set_1',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -910,7 +909,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest { id: $this_id, name: $this_name })',
                 '',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -937,8 +936,8 @@ describe('Query/Builder.js', () => {
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal({
-                'set_0': 'value1',
-                'set_1': 'value2',
+                set_0: 'value1',
+                set_1: 'value2',
             });
         });
 
@@ -961,7 +960,7 @@ describe('Query/Builder.js', () => {
                 'SET',
                 'this.prop1 = $set_0, this.prop2 = $set_1',
                 'RETURN',
-                'this,rel,that'
+                'this,rel,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -980,7 +979,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest { id: $this_id })',
                 '',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -999,7 +998,7 @@ describe('Query/Builder.js', () => {
                 '(this:QueryBuilderTest { id: $this_id, name: $this_name })',
                 '',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
@@ -1012,8 +1011,8 @@ describe('Query/Builder.js', () => {
                 .match('this', model, { id: 1 })
                 .match('that', model, { id: 2 })
                 .merge('this')
-                    .relationship('TO', 'out', 'r')
-                    .to('that')
+                .relationship('TO', 'out', 'r')
+                .to('that')
                 .set('r.value', 'something')
                 .return('this', 'r', 'that')
                 .build();
@@ -1031,11 +1030,11 @@ describe('Query/Builder.js', () => {
                 'SET',
                 'r.value = $set_0',
                 'RETURN',
-                'this,r,that'
+                'this,r,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
-            expect(params).to.deep.equal({ this_id: 1, that_id: 2, set_0: 'something' })
+            expect(params).to.deep.equal({ this_id: 1, that_id: 2, set_0: 'something' });
         });
 
         it('should combine match, merge and remove', () => {
@@ -1045,8 +1044,8 @@ describe('Query/Builder.js', () => {
                 .match('this', model, { id: 1 })
                 .match('that', model, { id: 2 })
                 .merge('this')
-                    .relationship('TO', 'out', 'r')
-                    .to('that')
+                .relationship('TO', 'out', 'r')
+                .to('that')
                 .set('r.value', 'something')
                 .remove('this:Label', 'that:Label')
                 .return('this', 'r', 'that')
@@ -1067,13 +1066,12 @@ describe('Query/Builder.js', () => {
                 'SET',
                 'r.value = $set_0',
                 'RETURN',
-                'this,r,that'
+                'this,r,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
-            expect(params).to.deep.equal({ this_id: 1, that_id: 2, set_0: 'something' })
+            expect(params).to.deep.equal({ this_id: 1, that_id: 2, set_0: 'something' });
         });
-
 
         it('should combine match, merge, remove, set, on create set and on match set', () => {
             const builder = new Builder();
@@ -1082,8 +1080,8 @@ describe('Query/Builder.js', () => {
                 .match('this', model, { id: 1 })
                 .match('that', model, { id: 2 })
                 .merge('this')
-                    .relationship('TO', 'out', 'r')
-                    .to('that')
+                .relationship('TO', 'out', 'r')
+                .to('that')
                 .set('r.value', 'something')
                 .onCreateSet('r.another', 'something else')
                 .onMatchSet('r.number', 10)
@@ -1111,18 +1109,18 @@ describe('Query/Builder.js', () => {
                 'SET',
                 'r.value = $set_0',
                 'RETURN',
-                'this,r,that'
+                'this,r,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal({
-                this_id: 1, 
-                that_id: 2, 
+                this_id: 1,
+                that_id: 2,
                 set_0: 'something',
                 set_1: 'something else',
                 set_2: 10,
                 set_3: true,
-            })
+            });
         });
 
         it('should accept an object of set values', () => {
@@ -1132,19 +1130,19 @@ describe('Query/Builder.js', () => {
                 .match('this', model, { id: 1 })
                 .match('that', model, { id: 2 })
                 .merge('this')
-                    .relationship('TO', 'out', 'r')
-                    .to('that')
+                .relationship('TO', 'out', 'r')
+                .to('that')
                 .set({
-                    'r.value': 'something'
+                    'r.value': 'something',
                 })
                 .onCreateSet({
-                    'r.another': 'something else'
+                    'r.another': 'something else',
                 })
                 .onMatchSet({
-                    'r.number': 10
+                    'r.number': 10,
                 })
                 .onMatchSet({
-                    'r.boolean': true
+                    'r.boolean': true,
                 })
                 .remove('this:Label', 'that:Label')
                 .return('this', 'r', 'that')
@@ -1169,20 +1167,20 @@ describe('Query/Builder.js', () => {
                 'SET',
                 'r.value = $set_0',
                 'RETURN',
-                'this,r,that'
+                'this,r,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal({
-                this_id: 1, 
-                that_id: 2, 
+                this_id: 1,
+                that_id: 2,
                 set_0: 'something',
                 set_1: 'something else',
                 set_2: 10,
                 set_3: true,
             });
         });
-        
+
         it('should accept raw values for set', () => {
             const builder = new Builder();
 
@@ -1203,13 +1201,13 @@ describe('Query/Builder.js', () => {
                 'SET',
                 'this:Label, that:OtherLabel',
                 'RETURN',
-                'this,that'
+                'this,that',
             ].join('\n');
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal({
-                this_id: 1, 
-                that_id: 2, 
+                this_id: 1,
+                that_id: 2,
             });
         });
 
@@ -1217,8 +1215,8 @@ describe('Query/Builder.js', () => {
             const builder = new Builder();
 
             const { query, params } = builder
-                .match('this', model, {id: 1})
-                .set('this', {foo: "bar"}, '+=')
+                .match('this', model, { id: 1 })
+                .set('this', { foo: 'bar' }, '+=')
                 .return('this')
                 .build();
 
@@ -1229,23 +1227,23 @@ describe('Query/Builder.js', () => {
                 'SET',
                 'this += $set_0',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal({
-                this_id: 1, 
-                set_0: {foo: "bar"},
+                this_id: 1,
+                set_0: { foo: 'bar' },
             });
         });
-        
+
         it('should accept a mutation for onCreateSet, onMatchSet', () => {
             const builder = new Builder();
 
             const { query, params } = builder
-                .merge('this', model, {id: 1})
-                .onCreateSet('this', {foo: "bar"}, '+=')
-                .onMatchSet('this', {foo: "baz"}, '+=')
+                .merge('this', model, { id: 1 })
+                .onCreateSet('this', { foo: 'bar' }, '+=')
+                .onMatchSet('this', { foo: 'baz' }, '+=')
                 .return('this')
                 .build();
 
@@ -1258,17 +1256,16 @@ describe('Query/Builder.js', () => {
                 'ON MATCH SET',
                 'this += $set_1',
                 'RETURN',
-                'this'
+                'this',
             ].join('\n');
 
             expect(query).to.equal(expected);
             expect(params).to.deep.equal({
-                this_id: 1, 
-                set_0: {foo: "bar"},
-                set_1: {foo: "baz"},
+                this_id: 1,
+                set_0: { foo: 'bar' },
+                set_1: { foo: 'baz' },
             });
         });
-
     });
 
     describe('::execute', () => {
@@ -1315,10 +1312,9 @@ describe('Query/Builder.js', () => {
     describe('WhereStatement', done => {
         it('should use a specific connector', () => {
             const statement = new WhereStatement();
-            statement.setConnector('OR')
+            statement.setConnector('OR');
 
             expect(statement._connector).to.equal('OR');
         });
     });
-
 });

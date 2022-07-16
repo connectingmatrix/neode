@@ -4,7 +4,7 @@ import Order from './Order';
 import Statement from './Statement';
 import Property from './Property';
 import WhereStatement from './WhereStatement';
-import Where, { OPERATOR_EQUALS, OPERATOR_INCLUDES } from './Where';
+import Where, { OPERATOR_EQUALS, OPERATOR_INCLUDES, OPERATOR_NULL } from './Where';
 import WhereBetween from './WhereBetween';
 import WhereId from './WhereId';
 import WhereRaw from './WhereRaw';
