@@ -1,6 +1,8 @@
 export const OPERATOR_EQUALS = '=';
 export const OPERATOR_INCLUDES = '=~';
 export const OPERATOR_NULL = 'is NULL';
+export const OPERATOR_CONTAINS = 'contains';
+
 export default class Where {
 
     constructor(left, operator, right) {
