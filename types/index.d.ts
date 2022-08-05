@@ -270,6 +270,27 @@ declare class Neode {
    * @return {Node}
    */
   hydrateFirst<T>(res: QueryResult, alias: string, definition?: Neode.Model<T> | string): Neode.Node<T>;
+
+
+  /**
+   * Take a result object and convert it into a Model
+   *
+   * @param {Object}              record
+   * @param {Model|String|null}   definition
+   * @return {Node}
+   */
+   hydrateNode<T>(record, definition?):Neode.Node<T> ;
+
+    /**
+     * Take a result object and convert it into a Relationship
+     *
+     * @param  {RelationshipType}  definition  Relationship type
+     * @param  {Object}            record      Record object
+     * @param  {Node}              this_node   'This' node in the current  context
+     * @return {Relationship}
+     */
+     hydrateRelationship(definition, record, this_node)
+
 }
 
 export = Neode;
@@ -472,6 +493,9 @@ declare namespace Neode {
      * @return {Builder}
      */
       statement(prefix: string): Builder;
+
+
+     variables?: Set<unknown>;
 
       /**
      * Start a new Where Segment

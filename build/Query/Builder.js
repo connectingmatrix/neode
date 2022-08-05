@@ -283,11 +283,7 @@ var Builder = /*#__PURE__*/function () {
       } // If only one argument, treat it as a single string
 
 
-      console.log('*************** coming here 0',args.length, args);
-
       if (args.length == 1) {
-        console.log('*************** coming here 1');
-
         var _args = args,
             _args2 = _slicedToArray(_args, 1),
             arg = _args2[0];
@@ -304,8 +300,6 @@ var Builder = /*#__PURE__*/function () {
           this._where.append(new _WhereRaw["default"](args[0]));
         }
       } else {
-        console.log('*************** coming here 2');
-
         var _args3 = args,
             _args4 = _slicedToArray(_args3, 3),
             left = _args4[0],
