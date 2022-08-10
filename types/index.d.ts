@@ -2,6 +2,7 @@
 /* eslint-disable no-redeclare */
 /* eslint-disable camelcase */
 import { QueryResult, Node as Neo4jNode, Relationship, Session, Transaction, Integer } from 'neo4j-driver';
+import {TransactionConfig} from 'neo4j-driver-core'
 
 declare class Neode {
   schema: Neode.Schema;
@@ -686,7 +687,7 @@ declare namespace Neode {
      *
      * @return {Promise}
      */
-      execute(mode?: Mode): Promise<QueryResult>;
+      execute(mode?: Mode, txConfig?:TransactionConfig): Promise<QueryResult>;
   }
 
   class Queryable<T> {

@@ -671,7 +671,7 @@ export default class Builder {
      * @param  {String}  query_mode
      * @return {Promise}
      */
-    execute(query_mode = mode.WRITE) {
+    execute(query_mode = mode.WRITE, txConfig) {
         const { query, params } = this.build();
 
         let session
@@ -680,7 +680,7 @@ export default class Builder {
             case mode.WRITE:
                 session = this._neode.writeSession()
 
-                return session.writeTransaction(tx => tx.run(query, params))
+                return session.writeTransaction(tx => tx.run(query, params),txConfig)
                     .then(res => {
                         session.close()
 
@@ -691,7 +691,7 @@ export default class Builder {
             default:
                 session = this._neode.readSession()
 
-                return session.readTransaction(tx => tx.run(query, params))
+                return session.readTransaction(tx => tx.run(query, params),txConfig)
                     .then(res => {
                         session.close()
 

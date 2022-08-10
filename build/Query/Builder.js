@@ -842,6 +842,7 @@ var Builder = /*#__PURE__*/function () {
     key: "execute",
     value: function execute() {
       var query_mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : mode.WRITE;
+      var txConfig = arguments.length > 1 ? arguments[1] : undefined;
 
       var _this$build = this.build(),
           query = _this$build.query,
@@ -854,7 +855,7 @@ var Builder = /*#__PURE__*/function () {
           session = this._neode.writeSession();
           return session.writeTransaction(function (tx) {
             return tx.run(query, params);
-          }).then(function (res) {
+          }, txConfig).then(function (res) {
             session.close();
             return res;
           });
@@ -863,7 +864,7 @@ var Builder = /*#__PURE__*/function () {
           session = this._neode.readSession();
           return session.readTransaction(function (tx) {
             return tx.run(query, params);
-          }).then(function (res) {
+          }, txConfig).then(function (res) {
             session.close();
             return res;
           });

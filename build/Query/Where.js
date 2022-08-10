@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = exports.OPERATOR_INCLUDES = exports.OPERATOR_EQUALS = void 0;
+exports["default"] = exports.OPERATOR_CONTAINS = exports.OPERATOR_NULL = exports.OPERATOR_INCLUDES = exports.OPERATOR_EQUALS = void 0;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -15,6 +15,10 @@ var OPERATOR_EQUALS = '=';
 exports.OPERATOR_EQUALS = OPERATOR_EQUALS;
 var OPERATOR_INCLUDES = '=~';
 exports.OPERATOR_INCLUDES = OPERATOR_INCLUDES;
+var OPERATOR_NULL = 'is NULL';
+exports.OPERATOR_NULL = OPERATOR_NULL;
+var OPERATOR_CONTAINS = 'contains';
+exports.OPERATOR_CONTAINS = OPERATOR_CONTAINS;
 
 var Where = /*#__PURE__*/function () {
   function Where(left, operator, right) {
