@@ -8,3 +8,13 @@ export default class WithStatement {
         return 'WITH '+  vars;
     }
 }
+
+export class UnionStatement {
+    constructor(args) {
+        this._with = args;
+    }
+
+    toString() {
+        return 'UNION '+  this._with;
+    }
+}

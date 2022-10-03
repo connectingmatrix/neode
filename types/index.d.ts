@@ -533,6 +533,15 @@ declare namespace Neode {
      */
       with(...args: Array<string>): Builder;
 
+
+    /**
+     * Add a 'with' statement to the query
+     *
+     * @param  {...String} args Variables/aliases to return
+     * @return {Builder}
+     */
+      union(args: string): Builder;
+
       /**
      * Create a new WhereSegment
      * @param  {...mixed} args
