@@ -65,7 +65,11 @@ export default class Entity {
      * @return {int}
      */
     id() {
-        return this._identity.toNumber();
+        if ( neo4j.isInt(this._identity) ) {
+            return this._identity.toNumber();
+        }else{
+            return this._identity
+        }
     }
 
     /**

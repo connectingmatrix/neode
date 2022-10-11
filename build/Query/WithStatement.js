@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0;
+exports.UnionStatement = exports["default"] = void 0;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -35,3 +35,22 @@ var WithStatement = /*#__PURE__*/function () {
 }();
 
 exports["default"] = WithStatement;
+
+var UnionStatement = /*#__PURE__*/function () {
+  function UnionStatement(args) {
+    _classCallCheck(this, UnionStatement);
+
+    this._with = args;
+  }
+
+  _createClass(UnionStatement, [{
+    key: "toString",
+    value: function toString() {
+      return 'UNION ' + this._with;
+    }
+  }]);
+
+  return UnionStatement;
+}();
+
+exports.UnionStatement = UnionStatement;

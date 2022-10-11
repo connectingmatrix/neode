@@ -97,7 +97,11 @@ var Entity = /*#__PURE__*/function () {
      * @return {int}
      */
     value: function id() {
-      return this._identity.toNumber();
+      if (_neo4jDriver["default"].isInt(this._identity)) {
+        return this._identity.toNumber();
+      } else {
+        return this._identity;
+      }
     }
     /**
      * Return internal ID as a Neo4j Integer

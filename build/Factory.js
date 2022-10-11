@@ -105,7 +105,11 @@ var Factory = /*#__PURE__*/function () {
       var _this2 = this;
 
       // Is there no better way to check this?!
-      if (_neo4jDriver["default"].isInt(record.identity) && Array.isArray(record.labels)) {
+
+      /** Neo4j is bitch */
+      if (
+      /*neo4j.isInt( record.identity ) &&*/
+      Array.isArray(record.labels)) {
         var _Object$assign;
 
         record = Object.assign({}, record.properties, (_Object$assign = {}, _defineProperty(_Object$assign, _EagerUtils.EAGER_ID, record.identity), _defineProperty(_Object$assign, _EagerUtils.EAGER_LABELS, record.labels), _Object$assign));

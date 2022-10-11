@@ -70,7 +70,10 @@ export default class Factory {
      */
     hydrateNode(record, definition) {
         // Is there no better way to check this?!
-        if ( neo4j.isInt( record.identity ) && Array.isArray( record.labels ) ) {
+
+        /** Neo4j is bitch */
+
+        if ( /*neo4j.isInt( record.identity ) &&*/ Array.isArray( record.labels ) ) {
             record = Object.assign({}, record.properties, {
                 [EAGER_ID]: record.identity,
                 [EAGER_LABELS]: record.labels,
